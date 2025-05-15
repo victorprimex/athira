@@ -2,13 +2,7 @@
 name = "athira"
 version = "2.0.0"
 edition = "2021"
-authors = ["Your Name <your.email@example.com>"]
-description = "Git hooks manager and commit message linter"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/thira"
-readme = "README.md"
-keywords = ["git", "hooks", "commit", "lint", "cli"]
-categories = ["command-line-utilities", "development-tools"]
+
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }

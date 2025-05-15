@@ -142,14 +142,6 @@ jobs:
           sccache: true
           manylinux: auto
 
-      - name: Debug - List BINARY Downloaded Files
-        run: |
-          echo "Contents of target directory:"
-          ls -R target/
-          echo "Current directory structure:"
-          pwd
-          find . -type f
-
       # - name: Build
       #   if: ${{ matrix.build.OS != 'ubuntu-latest' }}
       #   run: cargo build --release --locked --target ${{ matrix.build.TARGET }}
