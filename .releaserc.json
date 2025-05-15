@@ -5,6 +5,12 @@
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "perl -i -pe 's/(\\\"athira-[^\\\"]+\\\": *)?\\\"?\\\\*\\\"?/\\1\\\"${nextRelease.version}\\\"/g' packages/npm/athira/package.json"
+      }
+    ],
+    [
       "@semantic-release/npm",
       {
         "pkgRoot": "packages/npm/athira"
@@ -45,12 +51,6 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "sed -i.bak -E 's/^version = \"[^\"]+\"$/version = \"${nextRelease.version}\"/' Cargo.toml"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "publishCmd": "perl -i -pe 's/(\\\"athira-[^\\\"]+\\\": *)?\\\"?\\\\*\\\"?/\\1\\\"${nextRelease.version}\\\"/g' packages/npm/athira/package.json"
       }
     ],
     [
