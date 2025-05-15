@@ -202,15 +202,20 @@ jobs:
     needs: [prepare, build-platform-artifact]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      # Use to sign the release artifacts
+      id-token: write
+      # Used to upload release artifacts
+      contents: write
+      # Used to generate artifact attestation
+      attestations: write
     steps:
-      - name: Download wheel artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
         with:
-          pattern: wheels-*
-          path: dist
-          merge-multiple: true
+          subject-path: "wheels-*/*"
 
-      - uses: actions/checkout@v4
       - name: Build SDist
         uses: PyO3/maturin-action@v1
         with:
