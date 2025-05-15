@@ -7,7 +7,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "perl -i -pe 's/(\\\"athira-[^\\\"]+\\\": *)?\\\"?\\\\*\\\"?/\\1\\\"${nextRelease.version}\\\"/g' packages/npm/athira/package.json"
+        "prepareCmd": "perl -i -pe \"s/(\\\\\\\"athira-[^\\\\\\\"]+\\\\\\\": *)?\\\\\\\"?\\\\*\\\\\\\"?/\\1\\\\\\\"${nextRelease.version}\\\\\\\"/g\" packages/npm/athira/package.json"
       }
     ],
     [

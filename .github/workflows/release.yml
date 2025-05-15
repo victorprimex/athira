@@ -187,9 +187,30 @@ jobs:
           path: build-info/build-info.json
           retention-days: 1
 
+  sdist:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download updated Cargo.toml
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-toml
+          path: .
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist
+
   publish-python-packages:
     name: Publish Python Packages
-    needs: [prepare, build-platform-artifact]
+    needs: [prepare, build-platform-artifact, sdist]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -214,27 +235,6 @@ jobs:
         with:
           command: upload
           args: --repository-url=https://test.pypi.org/legacy/ --skip-existing wheels-*/*
-
-  sdist:
-    runs-on: ubuntu-latest
-    needs: prepare
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download updated Cargo.toml
-        uses: actions/download-artifact@v4
-        with:
-          name: cargo-toml
-          path: .
-      - name: Build sdist
-        uses: PyO3/maturin-action@v1
-        with:
-          command: sdist
-          args: --out dist
-      - name: Upload sdist
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-sdist
-          path: dist
 
   publish-npm-packages:
     name: Publish NPM Packages
@@ -380,7 +380,13 @@ jobs:
 
   release:
     name: Create Release
-    needs: [prepare, build-platform-artifact, publish-python-packages]
+    needs:
+      [
+        prepare,
+        build-platform-artifact,
+        publish-python-packages,
+        publish-npm-packages,
+      ]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
 
