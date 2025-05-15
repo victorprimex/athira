@@ -36,6 +36,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Update Cargo.toml version
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          echo "Updating version to ${{ steps.semantic.outputs.new_release_version }}"
+          sed -i.bak -E 's/^version = "[^"]+"$/version = "${{ steps.semantic.outputs.new_release_version }}"/' Cargo.toml
+          echo "Updated Cargo.toml:"
+          cat Cargo.toml | grep version
+
+      - name: Upload Cargo.toml
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-toml
+          path: Cargo.toml
+          retention-days: 1
+
   build-platform-artifact:
     name: Build Platform Artifacts
     needs: prepare
@@ -164,6 +180,12 @@ jobs:
           name: build-info-${{ matrix.build.NAME }}
           path: build-info/build-info.json
           retention-days: 1
+
+      - name: Download updated Cargo.toml
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-toml
+          path: .
 
   sdist:
     runs-on: ubuntu-latest
