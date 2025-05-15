@@ -126,6 +126,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Download updated Cargo.toml
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-toml
+          path: .
+
       - name: Build Python wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -180,12 +186,6 @@ jobs:
           name: build-info-${{ matrix.build.NAME }}
           path: build-info/build-info.json
           retention-days: 1
-
-      - name: Download updated Cargo.toml
-        uses: actions/download-artifact@v4
-        with:
-          name: cargo-toml
-          path: .
 
   sdist:
     runs-on: ubuntu-latest
