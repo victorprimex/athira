@@ -137,7 +137,6 @@ jobs:
       - name: Build Python wheels
         uses: PyO3/maturin-action@v1
         with:
-          maturin-version: "1.8.6"
           target: ${{ matrix.build.MATURIN_TARGET }}
           args: --release --out dist
           sccache: true
