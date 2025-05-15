@@ -138,7 +138,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.build.MATURIN_TARGET }}
-          args: --release --out dist-python --target-dir "target/${{ matrix.build.TARGET }}"
+          args: --release --out dist-python
           sccache: true
           manylinux: auto
 
