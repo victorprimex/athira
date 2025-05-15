@@ -238,7 +238,7 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --repository-url=https://test.pypi.org/legacy/ --non-interactive --skip-existing wheels-*/*
+          args: --repository-url=https://test.pypi.org/legacy/ --skip-existing wheels-*/*
 
   publish-npm-packages:
     name: Publish NPM Packages
