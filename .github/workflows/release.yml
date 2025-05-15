@@ -213,6 +213,7 @@ jobs:
     needs: [prepare, build-platform-artifact, sdist]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       # Use to sign the release artifacts
       id-token: write
@@ -241,6 +242,7 @@ jobs:
     needs: [prepare, build-platform-artifact]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
       - name: Checkout
