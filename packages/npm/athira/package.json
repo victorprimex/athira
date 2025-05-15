@@ -1,6 +1,6 @@
 {
   "name": "athira",
-  "version": "0.1.1",
+  "version": "1000.1.0",
   "bin": "lib/index.js",
   "repository": {
     "type": "git",
