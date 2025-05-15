@@ -45,6 +45,9 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "sed -i.bak -E 's/^version = \"[^\"]+\"$/version = \"${nextRelease.version}\"/' Cargo.toml"
+      },
+      {
+        "publishCmd": "perl -i -pe 's/(\\\"athira-[^\\\"]+\\\": *)?\\\"?\\\\*\\\"?/\\1\\\"${nextRelease.version}\\\"/g' packages/npm/athira/package.json"
       }
     ],
     [

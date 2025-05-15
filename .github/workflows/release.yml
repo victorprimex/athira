@@ -36,21 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Update Cargo.toml version
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: |
-          echo "Updating version to ${{ steps.semantic.outputs.new_release_version }}"
-          sed -i.bak -E 's/^version = "[^"]+"$/version = "${{ steps.semantic.outputs.new_release_version }}"/' Cargo.toml
-          echo "Updated Cargo.toml:"
-          cat Cargo.toml | grep version
-
-      - name: Upload Cargo.toml
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: cargo-toml
-          path: Cargo.toml
-          retention-days: 1
   build-platform-artifact:
     name: Build Platform Artifacts
     needs: prepare
@@ -125,15 +110,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Install Rust toolchain
-      #   shell: bash
-      #   run: |
-      #     rustup toolchain install stable --target ${{ matrix.build.TARGET }}
-      #     rustup default stable
-      #     if [[ "${{ matrix.build.OS }}" == "ubuntu-latest" ]]; then
-      #       cargo install cross
-      #     fi
-
       - name: Build Python wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -141,14 +117,6 @@ jobs:
           args: --release --out dist
           sccache: true
           manylinux: auto
-
-      # - name: Build
-      #   if: ${{ matrix.build.OS != 'ubuntu-latest' }}
-      #   run: cargo build --release --locked --target ${{ matrix.build.TARGET }}
-
-      # - name: Build with Cross
-      #   if: ${{ matrix.build.OS == 'ubuntu-latest' }}
-      #   run: cross build --release --locked --target ${{ matrix.build.TARGET }}
 
       - name: Package binary (Unix)
         if: matrix.build.OS != 'windows-2022'
@@ -276,7 +244,6 @@ jobs:
           echo "VERSION: ${{needs.prepare.outputs.new_version}}"
           cd packages/npm
 
-
           # Process each build artifact
           for info_file in ../../build-info/build-info-*/build-info.json; do
             # Parse build info
@@ -354,7 +321,7 @@ jobs:
 
             # publish the package
             cd "${node_pkg}"
-            npm publish --access public --dry-run
+            npm publish --access public
             cd ../
           done
         env:
@@ -379,7 +346,7 @@ jobs:
         run: |
           cd packages/npm/athira
           npm install # requires optional dependencies to be present in the registry
-          npm publish --access public --dry-run
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -416,7 +383,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
         with:
-          dry_run: true
+          # dry_run: true
           extra_plugins: |
             @semantic-release/changelog@6.0.3
             @semantic-release/git

@@ -1,14 +1,7 @@
 {
   "name": "athira",
-  "version": "2.0.0",
+  "version": "1000.0.1",
   "bin": "lib/index.js",
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "tsc",
-    "dev": "yarn build && node lib/index.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orhun/packaging-rust-for-npm"
@@ -18,13 +11,6 @@
     "url": "https://github.com/orhun/packaging-rust-for-npm/issues"
   },
   "homepage": "https://github.com/orhun/packaging-rust-for-npm#readme",
-  "devDependencies": {
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.48.0",
-    "@typescript-eslint/parser": "^5.48.0",
-    "eslint": "^8.31.0",
-    "typescript": "^4.9.4"
-  },
   "optionalDependencies": {
     "athira-linux-x64": "*",
     "athira-linux-arm64": "*",
@@ -32,19 +18,5 @@
     "athira-darwin-arm64": "*",
     "athira-windows-x64": "*",
     "athira-windows-arm64": "*"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "ignorePatterns": [
-      "lib/*"
-    ],
-    "root": true
   }
 }
