@@ -1,3 +1,10 @@
+# [1000.7.0](https://github.com/victorprimex/athira/compare/v1000.6.0...v1000.7.0) (2025-05-15)
+
+
+### Features
+
+* tes release ([093a7e8](https://github.com/victorprimex/athira/commit/093a7e878225abc2a38bc691a5c40faac3eb6160))
+
 # [1000.6.0](https://github.com/victorprimex/athira/compare/v1000.5.0...v1000.6.0) (2025-05-15)
 
 
