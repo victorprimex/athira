@@ -1,7 +1,3 @@
 tes
-s
-aa
-a
-a
-
-tess
+ss
+sss
