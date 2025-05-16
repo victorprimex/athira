@@ -1,3 +1,10 @@
+# [1000.9.0](https://github.com/victorprimex/athira/compare/v1000.8.0...v1000.9.0) (2025-05-16)
+
+
+### Features
+
+* release test ([2349899](https://github.com/victorprimex/athira/commit/23498994b966155d4877cfae01983f2f31fb2f55))
+
 # [1000.8.0](https://github.com/victorprimex/athira/compare/v1000.7.0...v1000.8.0) (2025-05-15)
 
 
