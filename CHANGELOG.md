@@ -1,3 +1,11 @@
+## [1000.9.1](https://github.com/victorprimex/athira/compare/v1000.9.0...v1000.9.1) (2025-05-16)
+
+
+### Bug Fixes
+
+* release test ([ea20da4](https://github.com/victorprimex/athira/commit/ea20da407163f57e0837e4f761eb8e5078f97b5a))
+* release test ([94db293](https://github.com/victorprimex/athira/commit/94db2939da2039edcce039f0063e422590eb00ef))
+
 # [1000.9.0](https://github.com/victorprimex/athira/compare/v1000.8.0...v1000.9.0) (2025-05-16)
 
 
