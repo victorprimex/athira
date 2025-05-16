@@ -55,11 +55,11 @@ jobs:
       # Update version in package.json
       - name: Update package versions
         run: |
-          perl -i -pe 's/(\"athira-[^\"]+\": *)\"[^\"]+\"/\1\"${nextRelease.version}\"/g' packages/npm/athira/package.json
+          perl -i -pe 's/(\"athira-[^\"]+\": *)\"[^\"]+\"/\1\"${{ steps.semantic.outputs.new_release_version }}\"/g' packages/npm/athira/package.json
 
       # Upload the modified package.json as an artifact
       - name: Upload package.json artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package-json
           path: packages/npm/athira/package.json
@@ -412,7 +412,7 @@ jobs:
 
       # Download the modified package.json
       - name: Download package.json artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: package-json
           path: packages/npm/athira/
