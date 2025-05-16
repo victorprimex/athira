@@ -52,6 +52,19 @@ jobs:
           path: Cargo.toml
           retention-days: 1
 
+      # Update version in package.json
+      - name: Update package versions
+        run: |
+          perl -i -pe 's/(\"athira-[^\"]+\": *)\"[^\"]+\"/\1\"${nextRelease.version}\"/g' packages/npm/athira/package.json
+
+      # Upload the modified package.json as an artifact
+      - name: Upload package.json artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: package-json
+          path: packages/npm/athira/package.json
+          retention-days: 1
+
   build-platform-artifact:
     name: Build Platform Artifacts
     needs: prepare
@@ -396,6 +409,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # Download the modified package.json
+      - name: Download package.json artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: package-json
+          path: packages/npm/athira/
 
       - name: Create dist directory
         run: mkdir -p binary-dist
