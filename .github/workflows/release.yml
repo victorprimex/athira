@@ -377,6 +377,7 @@ jobs:
     needs: [prepare, build-platform-artifact, sdist]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
