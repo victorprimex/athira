@@ -27,6 +27,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
         with:
+          semantic_version: 24.2.4
           dry_run: true # Only determine version without publishing
           extra_plugins: |
             @semantic-release/changelog@6.0.3
@@ -434,6 +435,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
         with:
+          semantic_version: 24.2.4
           # dry_run: true
           extra_plugins: |
             @semantic-release/changelog@6.0.3
