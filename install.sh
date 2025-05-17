@@ -91,64 +91,52 @@ print_shell_config() {
     local shell_name="$2"
     local config_file="$3"
 
-    echo -e "\n${BLUE}Detected login shell: ${shell_name}${NC}"
-    echo -e "${YELLOW}$install_dir is not in your PATH${NC}"
-    echo -e "To add it, use one of these methods:\n"
+    echo -e "\n${BLUE}Installation Directory: ${install_dir}${NC}"
+    echo -e "${YELLOW}Note: This directory needs to be added to your PATH${NC}"
+    echo -e "\nChoose one of these methods to add it:\n"
 
+    # Method 1: Direct command for immediate use
+    echo -e "${BLUE}1. Immediate use (current session):${NC}"
     case "$shell_name" in
         fish)
-            echo "1. For immediate use, run this command:"
             echo -e "${GREEN}    fish_add_path $install_dir${NC}"
-            echo
-            echo "2. For permanent addition, add this to $config_file:"
-            echo -e "${GREEN}    if test -d $install_dir
-    fish_add_path $install_dir
-end${NC}"
-            echo
-            echo "3. If using home-manager, add to your configuration:"
-            echo -e "${GREEN}    programs.fish = {
-      enable = true;
-      interactiveShellInit = ''
-        if test -d $install_dir
-          fish_add_path $install_dir
-        end
-      '';
-    };${NC}"
-            ;;
-        zsh)
-            echo "1. Add this line to $config_file:"
-            echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
-            echo
-            echo "2. If using home-manager, add to your configuration:"
-            echo -e "${GREEN}    programs.zsh = {
-      enable = true;
-      initExtra = ''
-        export PATH=\"\$PATH:$install_dir\"
-      '';
-    };${NC}"
-            ;;
-        bash)
-            echo "1. Add this line to $config_file:"
-            echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
-            echo
-            echo "2. If using home-manager, add to your configuration:"
-            echo -e "${GREEN}    programs.bash = {
-      enable = true;
-      initExtra = ''
-        export PATH=\"\$PATH:$install_dir\"
-      '';
-    };${NC}"
             ;;
         *)
-            echo "Add this line to your shell's configuration file:"
             echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
             ;;
     esac
 
-    echo -e "\nAfter adding, either:"
-    echo "- Start a new terminal session, or"
-    echo -e "- Reload your shell configuration\n"
+    # Method 2: Shell configuration file
+    echo -e "\n${BLUE}2. Permanent addition:${NC}"
+    case "$shell_name" in
+        fish)
+            echo -e "Add to $config_file:"
+            echo -e "${GREEN}    if test -d $install_dir
+    fish_add_path $install_dir
+end${NC}"
+            ;;
+        *)
+            echo -e "Add to your shell's config file (e.g., $config_file):"
+            echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
+            ;;
+    esac
+
+    # Method 3: Nix Home Manager
+    echo -e "\n${BLUE}3. Using Nix Home Manager:${NC}"
+    echo -e "Add to your Home Manager configuration:"
+    echo -e "${GREEN}    home.sessionPath = [
+      \"$install_dir\"
+    ];${NC}"
+
+    echo -e "\n${YELLOW}After adding the PATH:${NC}"
+    echo "• Start a new terminal session, or"
+    echo "• Reload your shell configuration"
+
+    echo -e "\n${BLUE}To verify the installation:${NC}"
+    echo "• Run: athira --help"
+    echo -e "• If it doesn't work, make sure the PATH is properly set: echo \$PATH\n"
 }
+
 
 # Detect OS and architecture
 detect_platform() {
