@@ -30,29 +30,88 @@ warn() {
     echo -e "${YELLOW}Warning: $1${NC}"
 }
 
+# Detect user's actual shell
+detect_shell() {
+    local shell_path=""
+
+    # Try multiple methods to detect the actual shell
+    if [ -n "$FISH_VERSION" ]; then
+        # Directly detected Fish shell
+        shell_path=$(which fish)
+    elif [ -n "$ZSH_VERSION" ]; then
+        # Directly detected Zsh
+        shell_path=$(which zsh)
+    else
+        # Check common methods to detect the login shell
+        if command -v dscl >/dev/null 2>&1 && [ "$(uname)" = "Darwin" ]; then
+            # macOS - use dscl to get user shell
+            shell_path=$(dscl . -read ~/ UserShell | sed 's/UserShell: //')
+        elif [ -r /etc/passwd ]; then
+            # Unix-like systems - check passwd file
+            shell_path=$(getent passwd $USER | cut -d: -f7)
+        fi
+
+        # Fallback to $SHELL if other methods fail
+        if [ -z "$shell_path" ]; then
+            shell_path=$SHELL
+        fi
+    fi
+
+    # Extract just the shell name
+    local shell_name
+    shell_name=$(basename "$shell_path")
+
+    # Determine config file path
+    local config_file
+    case "$shell_name" in
+        fish)
+            if [ -d "$HOME/.config/fish" ]; then
+                config_file="~/.config/fish/config.fish"
+            else
+                config_file="~/.config/fish/config.fish (will need to create directory)"
+            fi
+            ;;
+        zsh)    config_file="~/.zshrc";;
+        bash)
+            if [[ "$OS" == "darwin" ]]; then
+                config_file="~/.bash_profile"
+            else
+                config_file="~/.bashrc"
+            fi
+            ;;
+        *)      config_file="your shell's config file";;
+    esac
+
+    echo "$shell_name:$config_file"
+}
+
 # Print shell configuration help
 print_shell_config() {
     local install_dir="$1"
     local shell_name="$2"
     local config_file="$3"
 
-    echo -e "${BLUE}Detected shell: ${shell_name}${NC}"
+    echo -e "\n${BLUE}Detected login shell: ${shell_name}${NC}"
     echo -e "${YELLOW}$install_dir is not in your PATH${NC}"
     echo -e "To add it, use one of these methods:\n"
 
     case "$shell_name" in
         fish)
-            echo "1. Run this command:"
+            echo "1. For immediate use, run this command:"
             echo -e "${GREEN}    fish_add_path $install_dir${NC}"
             echo
-            echo "2. Or add this to ~/.config/fish/config.fish:"
-            echo -e "${GREEN}    fish_add_path $install_dir${NC}"
+            echo "2. For permanent addition, add this to $config_file:"
+            echo -e "${GREEN}    if test -d $install_dir
+    fish_add_path $install_dir
+end${NC}"
             echo
             echo "3. If using home-manager, add to your configuration:"
             echo -e "${GREEN}    programs.fish = {
       enable = true;
       interactiveShellInit = ''
-        fish_add_path $install_dir
+        if test -d $install_dir
+          fish_add_path $install_dir
+        end
       '';
     };${NC}"
             ;;
@@ -86,7 +145,9 @@ print_shell_config() {
             ;;
     esac
 
-    echo -e "\nAfter adding, either:\n- Start a new terminal session, or\n- Reload your shell configuration"
+    echo -e "\nAfter adding, either:"
+    echo "- Start a new terminal session, or"
+    echo -e "- Reload your shell configuration\n"
 }
 
 # Detect OS and architecture
@@ -123,41 +184,6 @@ get_latest_version() {
     LATEST_VERSION=$(curl -sL ${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest | grep '"tag_name":' | cut -d'"' -f4)
     [ -z "$LATEST_VERSION" ] && error "Failed to fetch latest version"
     info "Latest version: $LATEST_VERSION"
-}
-
-# Detect user's shell
-detect_shell() {
-    # First try getting the user's default shell from /etc/passwd
-    local shell_path
-    if [ -r /etc/passwd ]; then
-        shell_path=$(grep "^${USER}:" /etc/passwd | cut -d: -f7)
-    fi
-
-    # If that didn't work, try $SHELL
-    if [ -z "$shell_path" ]; then
-        shell_path="$SHELL"
-    fi
-
-    # Extract just the shell name
-    local shell_name
-    shell_name=$(basename "$shell_path")
-
-    # Determine config file path
-    local config_file
-    case "$shell_name" in
-        fish)   config_file="~/.config/fish/config.fish";;
-        zsh)    config_file="~/.zshrc";;
-        bash)
-            if [[ "$OS" == "darwin" ]]; then
-                config_file="~/.bash_profile"
-            else
-                config_file="~/.bashrc"
-            fi
-            ;;
-        *)      config_file="your shell's config file";;
-    esac
-
-    echo "$shell_name:$config_file"
 }
 
 # Download and install the binary
