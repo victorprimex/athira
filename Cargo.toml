@@ -18,6 +18,7 @@ exclude = [
     "hooks.yaml",
     "flake.nix",
     "flake.lock",
+    ".direv/*"
 ]
 
 [dependencies]
