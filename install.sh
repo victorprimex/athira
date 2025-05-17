@@ -30,103 +30,67 @@ warn() {
     echo -e "${YELLOW}Warning: $1${NC}"
 }
 
-# Detect user's actual shell
-detect_shell() {
-    local shell_path=""
-
-    # Try multiple methods to detect the actual shell
-    if [ -n "$FISH_VERSION" ]; then
-        # Directly detected Fish shell
-        shell_path=$(which fish)
-    elif [ -n "$ZSH_VERSION" ]; then
-        # Directly detected Zsh
-        shell_path=$(which zsh)
-    else
-        # Check common methods to detect the login shell
-        if command -v dscl >/dev/null 2>&1 && [ "$(uname)" = "Darwin" ]; then
-            # macOS - use dscl to get user shell
-            shell_path=$(dscl . -read ~/ UserShell | sed 's/UserShell: //')
-        elif [ -r /etc/passwd ]; then
-            # Unix-like systems - check passwd file
-            shell_path=$(getent passwd $USER | cut -d: -f7)
-        fi
-
-        # Fallback to $SHELL if other methods fail
-        if [ -z "$shell_path" ]; then
-            shell_path=$SHELL
-        fi
-    fi
-
-    # Extract just the shell name
-    local shell_name
-    shell_name=$(basename "$shell_path")
-
-    # Determine config file path
-    local config_file
-    case "$shell_name" in
-        fish)
-            if [ -d "$HOME/.config/fish" ]; then
-                config_file="~/.config/fish/config.fish"
-            else
-                config_file="~/.config/fish/config.fish (will need to create directory)"
-            fi
-            ;;
-        zsh)    config_file="~/.zshrc";;
-        bash)
-            if [[ "$OS" == "darwin" ]]; then
-                config_file="~/.bash_profile"
-            else
-                config_file="~/.bashrc"
-            fi
-            ;;
-        *)      config_file="your shell's config file";;
-    esac
-
-    echo "$shell_name:$config_file"
-}
-
 # Print shell configuration help
 print_shell_config() {
     local install_dir="$1"
-    local shell_name="$2"
-    local config_file="$3"
 
     echo -e "\n${BLUE}Installation Directory: ${install_dir}${NC}"
     echo -e "${YELLOW}Note: This directory needs to be added to your PATH${NC}"
     echo -e "\nChoose one of these methods to add it:\n"
 
-    # Method 1: Direct command for immediate use
-    echo -e "${BLUE}1. Immediate use (current session):${NC}"
-    case "$shell_name" in
-        fish)
-            echo -e "${GREEN}    fish_add_path $install_dir${NC}"
-            ;;
-        *)
-            echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
-            ;;
-    esac
-
-    # Method 2: Shell configuration file
-    echo -e "\n${BLUE}2. Permanent addition:${NC}"
-    case "$shell_name" in
-        fish)
-            echo -e "Add to $config_file:"
-            echo -e "${GREEN}    if test -d $install_dir
+    # Fish Shell Configuration
+    echo -e "${BLUE}For Fish shell:${NC}"
+    echo "1. Immediate use:"
+    echo -e "${GREEN}    fish_add_path $install_dir${NC}"
+    echo "2. Add to ~/.config/fish/config.fish:"
+    echo -e "${GREEN}    if test -d $install_dir
     fish_add_path $install_dir
 end${NC}"
-            ;;
-        *)
-            echo -e "Add to your shell's config file (e.g., $config_file):"
-            echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
-            ;;
-    esac
+    echo "3. Using Home Manager:"
+    echo -e "${GREEN}    programs.fish = {
+      enable = true;
+      interactiveShellInit = ''
+        if test -d $install_dir
+          fish_add_path $install_dir
+        end
+      '';
+    };${NC}"
 
-    # Method 3: Nix Home Manager
-    echo -e "\n${BLUE}3. Using Nix Home Manager:${NC}"
-    echo -e "Add to your Home Manager configuration:"
-    echo -e "${GREEN}    home.sessionPath = [
-      \"$install_dir\"
-    ];${NC}"
+    # Bash Shell Configuration
+    echo -e "\n${BLUE}For Bash shell:${NC}"
+    echo "1. Immediate use:"
+    echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
+    echo "2. Add to ~/.bashrc (Linux) or ~/.bash_profile (macOS):"
+    echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
+    echo "3. Using Home Manager:"
+    echo -e "${GREEN}    programs.bash = {
+      enable = true;
+      initExtra = ''
+        export PATH=\"\$PATH:$install_dir\"
+      '';
+    };${NC}"
+
+    # Zsh Shell Configuration
+    echo -e "\n${BLUE}For Zsh shell:${NC}"
+    echo "1. Immediate use:"
+    echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
+    echo "2. Add to ~/.zshrc:"
+    echo -e "${GREEN}    export PATH=\"\$PATH:$install_dir\"${NC}"
+    echo "3. Using Home Manager:"
+    echo -e "${GREEN}    programs.zsh = {
+      enable = true;
+      initExtra = ''
+        export PATH=\"\$PATH:$install_dir\"
+      '';
+    };${NC}"
+
+    # Nix Home Manager (shell-agnostic approach)
+    echo -e "\n${BLUE}Shell-agnostic Home Manager approach:${NC}"
+    echo -e "${GREEN}    home = {
+      sessionPath = [
+        \"$install_dir\"
+      ];
+    };${NC}"
 
     echo -e "\n${YELLOW}After adding the PATH:${NC}"
     echo "• Start a new terminal session, or"
@@ -136,7 +100,6 @@ end${NC}"
     echo "• Run: athira --help"
     echo -e "• If it doesn't work, make sure the PATH is properly set: echo \$PATH\n"
 }
-
 
 # Detect OS and architecture
 detect_platform() {
@@ -219,14 +182,9 @@ install_binary() {
     info "Installation successful!"
     info "Installed to: $install_dir/athira"
 
-    # Check if install directory is in PATH and provide shell-specific instructions
+    # Check if install directory is in PATH and provide ALL shell instructions
     if [[ ":$PATH:" != *":$install_dir:"* ]]; then
-        local shell_info
-        shell_info=$(detect_shell)
-        local shell_name="${shell_info%%:*}"
-        local config_file="${shell_info#*:}"
-
-        print_shell_config "$install_dir" "$shell_name" "$config_file"
+        print_shell_config "$install_dir"
     fi
 }
 
@@ -240,7 +198,7 @@ main() {
     get_latest_version
     install_binary
 
-    info "You can now run 'athira' to use the CLI (after adding it to your PATH if needed)"
+    info "Installation complete! Make sure to add the binary location to your PATH if needed."
 }
 
 main
