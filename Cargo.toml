@@ -2,7 +2,23 @@
 name = "athira"
 version = "0.2.0"
 edition = "2021"
-
+description = "A command-line tool for automating development workflows"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/athira"
+documentation = "https://github.com/yourusername/athira#readme"
+homepage = "https://github.com/yourusername/athira"
+keywords = ["cli", "automation", "workflow", "development"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [
+    ".github/*",
+    ".gitignore",
+    ".thira/*",
+    "packages/*",
+    "hooks.yaml",
+    "flake.nix",
+    "flake.lock",
+]
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }

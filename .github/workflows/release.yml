@@ -372,6 +372,33 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  publish-cargo:
+    name: Publish to crates.io
+    needs: [prepare, build-platform-artifact]
+    if: needs.prepare.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download updated Cargo.toml
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-toml
+          path: .
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Publish to crates.io
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          args: --token ${{ secrets.CRATES_IO_TOKEN }}
+
   # publish-npm-base:
   #   name: Publish the base NPM package
   #   needs: publish-npm-packages
@@ -403,6 +430,7 @@ jobs:
         build-platform-artifact,
         publish-python-packages,
         publish-npm-packages,
+        publish-cargo,
       ]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
