@@ -254,7 +254,7 @@ jobs:
 
   publish-npm-packages:
     name: Publish NPM Packages
-    needs: [prepare, build-platform-artifact]
+    needs: [prepare, build-platform-artifact, sdist]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -374,7 +374,7 @@ jobs:
 
   publish-cargo:
     name: Publish to crates.io
-    needs: [prepare, build-platform-artifact]
+    needs: [prepare, build-platform-artifact, sdist]
     if: needs.prepare.outputs.release_created == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -397,7 +397,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: publish
-          args: --token ${{ secrets.CRATES_IO_TOKEN }}
+          args: --token ${{ secrets.CRATES_IO_TOKEN }} --allow-dirty
 
   # publish-npm-base:
   #   name: Publish the base NPM package
