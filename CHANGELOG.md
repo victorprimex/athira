@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/victorprimex/athira/compare/v0.4.0...v0.5.0) (2025-05-17)
+
+
+### Features
+
+* add crates ([8bbd325](https://github.com/victorprimex/athira/commit/8bbd3255fcebf230da3d4dd8fdbaff8c3f583ded))
+
 # [0.4.0](https://github.com/victorprimex/athira/compare/v0.3.0...v0.4.0) (2025-05-17)
 
 
