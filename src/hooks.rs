@@ -245,8 +245,9 @@ impl HookManager {
         self.config
             .hooks
             .entry(name.clone())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(hook);
+
 
         // Just save - config.save() will handle auto_install
         self.config.save()?;

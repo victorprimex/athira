@@ -34,7 +34,7 @@ impl GitRepo {
         let output = std::process::Command::new("git")
             .args(["rev-parse", "--git-dir"])
             .output()
-            .map_err(|e| HookError::IoError(e))?;
+            .map_err(HookError::IoError)?;
 
         if !output.status.success() {
             return Err(HookError::GitNotFound);
@@ -105,10 +105,8 @@ impl GitRepo {
         }
 
         // Only clean up custom hooks directory if it's not .git/hooks and not .git
-        if !self.hooks_dir.ends_with(".git/hooks") && !self.hooks_dir.ends_with(".git") {
-            if self.hooks_dir.exists() {
-                std::fs::remove_dir_all(&self.hooks_dir)?;
-            }
+        if !self.hooks_dir.ends_with(".git/hooks") && !self.hooks_dir.ends_with(".git") && self.hooks_dir.exists() {
+             std::fs::remove_dir_all(&self.hooks_dir)?;
         }
 
         Ok(())

@@ -1,15 +1,26 @@
 hooks:
-  pre-commit:
-    - command: ${lint}
   commit-msg:
     - command: /Users/ervan/Documents/Projects/athira/target/debug/athira
       args:
         - commit
         - validate
         - $1
+  pre-commit:
+    - command: cargo
+      args:
+        - test
+    - command: cargo
+      args:
+        - clippy
+    - command: cargo
+      args:
+        - fmt
+        - --all
+        - --check
 
 scripts:
   lint: cargo clippy
+  test: cargo test
 
 options:
   auto_install: true

@@ -172,18 +172,18 @@ fn main() {
 
 fn run() -> Result<()> {
     let cli = Cli::parse();
-    let mut hook_manager = hooks::HookManager::new().map_err(|e| {
-        match &e {
+    let mut hook_manager = hooks::HookManager::new().inspect_err(|e| {
+        match e {
             HookError::GitNotFound => {
                 println!(
                     "{}",
                     "Not a git repository. Please run 'git init' first.".red()
                 );
             }
-            _ => print_error(&e),
+            _ => print_error(e),
         }
-        e
     })?;
+
 
     match cli.command {
         Commands::Hooks(cmd) => match cmd {
