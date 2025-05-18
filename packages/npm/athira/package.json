@@ -1,6 +1,6 @@
 {
   "name": "athira",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "bin": "lib/index.js",
   "repository": {
     "type": "git",
@@ -12,11 +12,11 @@
   },
   "homepage": "https://github.com/orhun/packaging-rust-for-npm#readme",
   "optionalDependencies": {
-    "athira-linux-x64": "0.5.0",
-    "athira-linux-arm64": "0.5.0",
-    "athira-darwin-x64": "0.5.0",
-    "athira-darwin-arm64": "0.5.0",
-    "athira-windows-x64": "0.5.0",
-    "athira-windows-arm64": "0.5.0"
+    "athira-linux-x64": "0.6.0",
+    "athira-linux-arm64": "0.6.0",
+    "athira-darwin-x64": "0.6.0",
+    "athira-darwin-arm64": "0.6.0",
+    "athira-windows-x64": "0.6.0",
+    "athira-windows-arm64": "0.6.0"
   }
 }

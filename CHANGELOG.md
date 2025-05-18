@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/victorprimex/athira/compare/v0.5.0...v0.6.0) (2025-05-18)
+
+
+### Features
+
+* tidy up ([60f4ab5](https://github.com/victorprimex/athira/commit/60f4ab5c64be6d90e252ae0863472d636b1a5958))
+
 # [0.5.0](https://github.com/victorprimex/athira/compare/v0.4.0...v0.5.0) (2025-05-17)
 
 
