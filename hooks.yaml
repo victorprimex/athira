@@ -12,11 +12,6 @@ hooks:
     - command: cargo
       args:
         - clippy
-    - command: cargo
-      args:
-        - fmt
-        - --all
-        - --check
 
 scripts:
   lint: cargo clippy

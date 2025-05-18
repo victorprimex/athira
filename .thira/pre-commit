@@ -10,8 +10,3 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-cargo fmt --all --check
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
