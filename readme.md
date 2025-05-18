@@ -1,10 +1,10 @@
-# Athira - Git Hooks Manager
+# Thira - Git Hooks Manager
 
-[![Crates.io](https://img.shields.io/crates/v/athira.svg)](https://crates.io/crates/athira)
-[![NPM Version](https://img.shields.io/npm/v/athira.svg)](https://www.npmjs.com/package/athira)
-[![PyPI](https://img.shields.io/pypi/v/athira.svg)](https://pypi.org/project/athira/)
+[![Crates.io](https://img.shields.io/crates/v/thira.svg)](https://crates.io/crates/thira)
+[![NPM Version](https://img.shields.io/npm/v/thira.svg)](https://www.npmjs.com/package/thira)
+[![PyPI](https://img.shields.io/pypi/v/thira.svg)](https://pypi.org/project/thira/)
 
-Athira is a powerful Git hooks manager and commit message linter that helps you maintain consistent commit messages and automate your Git workflows.
+Thira is a Git hooks manager and commit message linter that helps you maintain consistent commit messages and automate your Git workflows.
 
 ## Features
 
@@ -20,23 +20,23 @@ Athira is a powerful Git hooks manager and commit message linter that helps you 
 
 Our documentation is split into several sections for easier navigation:
 
-- [Installation Guide](docs/installation.md) - How to install and set up Athira
-- [Basic Usage](docs/basic-usage.md) - Getting started with Athira
-- [Hook Management](docs/hook-management.md) - Managing Git hooks
-- [Script Management](docs/script-management.md) - Creating and managing custom scripts
-- [Commit Message Guidelines](docs/commit-guidelines.md) - How to write valid commit messages
+- [Installation Guide](https://github.com/yourusername/thira/blob/main/docs/installation.md) - How to install and set up Thira
+- [Basic Usage](https://github.com/yourusername/thira/blob/main/docs/basic-usage.md) - Getting started with Thira
+- [Hook Management](https://github.com/yourusername/thira/blob/main/docs/hook-management.md) - Managing Git hooks
+- [Script Management](https://github.com/yourusername/thira/blob/main/docs/script-management.md) - Creating and managing custom scripts
+- [Commit Message Guidelines](https://github.com/yourusername/thira/blob/main/docs/commit-guidelines.md) - How to write valid commit messages
 
 ## Quick Start
 
 ```sh
 # Install with Cargo
-cargo install athira
+cargo install thira
 
 # Install with NPM
-npm install -g athira
+npm install -g thira
 
 # Install with pip
-pip install athira
+pip install thira
 
 # Initialize configuration
 thira hooks init
@@ -45,7 +45,7 @@ thira hooks init
 thira hooks install
 ```
 
-Your Git hooks are now managed by Athira! Check out the [Basic Usage](docs/basic-usage.md) guide for more details.
+Your Git hooks are now managed by Thira! Check out the [Basic Usage](https://github.com/yourusername/thira/blob/main/docs/basic-usage.md) guide for more details.
 
 ## Project Status
 
