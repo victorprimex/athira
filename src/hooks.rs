@@ -79,6 +79,25 @@ impl HookManager {
     pub fn install_hooks(&self) -> Result<()> {
         self.config.validate()?;
 
+        // Get list of existing hook files
+        let existing_hooks = std::fs::read_dir(&self.repo.hooks_dir)
+            .map_err(|e| HookError::FileError {
+                path: self.repo.hooks_dir.clone(),
+                source: e,
+            })?
+            .filter_map(|entry| entry.ok())
+            .map(|entry| entry.file_name())
+            .filter_map(|name| name.into_string().ok())
+            .collect::<Vec<_>>();
+
+        // Remove hooks that are no longer in config
+        for hook_name in existing_hooks {
+            if !self.config.hooks.contains_key(&hook_name) {
+                self.repo.uninstall_hook(&hook_name)?;
+            }
+        }
+
+
         // Clean up old hooks in .git/hooks before installing new ones
         self.repo
             .clean_git_hooks(&self.config.hooks.keys().cloned().collect::<Vec<_>>())?;
@@ -229,11 +248,11 @@ impl HookManager {
             .or_insert_with(Vec::new)
             .push(hook);
 
+        // Just save - config.save() will handle auto_install
         self.config.save()?;
-
-        // Reinstall hooks after adding new one
-        self.install_hooks()?;
 
         Ok(())
     }
+
+
 }

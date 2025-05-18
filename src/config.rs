@@ -138,6 +138,7 @@ impl Config {
 
         // Auto-install hooks if enabled
         if self.options.auto_install {
+            println!("Installing hooks auto_install...");
             let hook_manager = crate::hooks::HookManager::new()?;
             hook_manager.install_hooks()?;
         }

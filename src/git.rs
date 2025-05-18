@@ -2,7 +2,7 @@ use crate::error::{HookError, Result};
 use std::path::PathBuf;
 
 pub struct GitRepo {
-    hooks_dir: PathBuf,
+    pub hooks_dir: PathBuf,
 }
 
 impl GitRepo {

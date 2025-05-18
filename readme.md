@@ -1,7 +1,56 @@
-tes
-ss
-sss
-a
-hh
-aaa
-aa
+# Athira - Git Hooks Manager
+
+[![Crates.io](https://img.shields.io/crates/v/athira.svg)](https://crates.io/crates/athira)
+[![NPM Version](https://img.shields.io/npm/v/athira.svg)](https://www.npmjs.com/package/athira)
+[![PyPI](https://img.shields.io/pypi/v/athira.svg)](https://pypi.org/project/athira/)
+
+Athira is a powerful Git hooks manager and commit message linter that helps you maintain consistent commit messages and automate your Git workflows.
+
+## Features
+
+- 🔧 Easy Git hooks management
+- 📝 Conventional commit message validation
+- 🚀 Custom script automation
+- ⚡ Simple and intuitive CLI
+- 🔄 Supports multiple hooks per event
+- 🎨 Colorful and informative output
+- 🛠️ Configurable commit message rules
+
+## Documentation
+
+Our documentation is split into several sections for easier navigation:
+
+- [Installation Guide](docs/installation.md) - How to install and set up Athira
+- [Basic Usage](docs/basic-usage.md) - Getting started with Athira
+- [Hook Management](docs/hook-management.md) - Managing Git hooks
+- [Script Management](docs/script-management.md) - Creating and managing custom scripts
+- [Commit Message Guidelines](docs/commit-guidelines.md) - How to write valid commit messages
+
+## Quick Start
+
+```sh
+# Install with Cargo
+cargo install athira
+
+# Install with NPM
+npm install -g athira
+
+# Install with pip
+pip install athira
+
+# Initialize configuration
+thira hooks init
+
+# Install Git hooks
+thira hooks install
+```
+
+Your Git hooks are now managed by Athira! Check out the [Basic Usage](docs/basic-usage.md) guide for more details.
+
+## Project Status
+
+This project is under active development. Feel free to open issues and submit pull requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
