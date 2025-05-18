@@ -1,25 +1,80 @@
 # Installation Guide
 
-## Prerequisites
-
-Before installing Athira, ensure you have the following installed:
-
-1. [Rust and Cargo](https://rustup.rs/) (1.56.0 or later)
-2. Git (2.28.0 or later)
+Athira can be installed through multiple package managers, via our install script, or using Nix.
 
 ## Installation Methods
 
-### 1. Using Cargo (Recommended)
+### 1. Using Install Script (Recommended)
 
-The easiest way to install Athira is through Cargo, Rust's package manager:
+The easiest way to install Athira is through our install script:
 
+```sh
+curl -sSL https://raw.githubusercontent.com/victorprimex/athira/main/install.sh | bash
+```
+
+### 2. Using Package Managers
+
+#### Cargo (Rust)
 ```sh
 cargo install athira
 ```
 
-This will download, compile, and install the latest stable version of Athira.
+#### NPM (Node.js)
+```sh
+npm install -g athira
+```
 
-### 2. Building from Source
+#### PyPI (Python)
+```sh
+pip install athira
+```
+
+### 3. Using Nix
+
+#### As a Flake (Recommended)
+```sh
+# Run directly
+nix run github:victorprimex/athira
+
+# Install into your profile
+nix profile install github:victorprimex/athira
+
+# Add to your NixOS configuration
+{
+  inputs.athira.url = "github:victorprimex/athira";
+  
+  # Add to your system packages
+  environment.systemPackages = [ inputs.athira.packages.${system}.default ];
+}
+```
+
+#### Development Shell
+To enter a development environment with all dependencies:
+```sh
+# Using flakes
+nix develop github:victorprimex/athira
+
+# Or clone the repository and run
+git clone https://github.com/victorprimex/athira.git
+cd athira
+nix develop
+```
+
+#### Building with Nix
+You can build the package from source using Nix:
+```sh
+# Build the package
+nix build github:victorprimex/athira
+
+# Or after cloning the repository
+git clone https://github.com/victorprimex/athira.git
+cd athira
+nix build
+
+# The built binary will be available in ./result/bin/thira
+```
+
+### 4. Building from Source
 
 If you want to build from source:
 
