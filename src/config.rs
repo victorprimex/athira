@@ -148,41 +148,29 @@ impl Config {
         for (name, script) in &self.scripts {
             content.push_str(&format!("  {}:\n", name));
 
-            // Only include parallel and max_threads if there are multiple commands
-            // or if parallel is explicitly enabled
-            if script.commands.len() > 1 || script.parallel {
+            // Write parallel and max_threads if parallel is true or there are multiple commands
+            if script.parallel || script.commands.len() > 1 {
                 content.push_str(&format!("    parallel: {}\n", script.parallel));
                 content.push_str(&format!("    max_threads: {}\n", script.max_threads));
             }
 
-            if script.commands.len() == 1 && !script.parallel {
-                // Simple format for single commands without extra configuration
-                let cmd = &script.commands[0];
-                if cmd.description.is_none() && cmd.working_dir.is_none() && cmd.env.is_empty() {
-                    content.push_str(&format!("    {}\n", cmd.command));
-                    continue;
-                }
-            }
-
-            // Full format with commands array
+            // Always write commands section
             content.push_str("    commands:\n");
             for cmd in &script.commands {
-                content.push_str("      - command: ");
-                content.push_str(&cmd.command);
-                content.push('\n');
+                content.push_str(&format!("      - command: \"{}\"\n", cmd.command));
 
                 if let Some(desc) = &cmd.description {
-                    content.push_str(&format!("        description: {}\n", desc));
+                    content.push_str(&format!("        description: \"{}\"\n", desc));
                 }
 
                 if let Some(dir) = &cmd.working_dir {
-                    content.push_str(&format!("        working_dir: {}\n", dir.display()));
+                    content.push_str(&format!("        working_dir: \"{}\"\n", dir.display()));
                 }
 
                 if !cmd.env.is_empty() {
                     content.push_str("        env:\n");
                     for (key, value) in &cmd.env {
-                        content.push_str(&format!("          {}: {}\n", key, value));
+                        content.push_str(&format!("          {}: \"{}\"\n", key, value));
                     }
                 }
             }
@@ -220,6 +208,7 @@ impl Config {
             self.lint.max_body_line_length
         ));
 
+        // Write the content to file
         std::fs::write("hooks.yaml", content)?;
 
         // Auto-install hooks if enabled
@@ -292,12 +281,14 @@ impl Config {
         self.scripts.insert(name, ScriptConfig {
             parallel: false,
             max_threads: default_max_threads(),
-            commands: vec![CommandConfig {
-                command,
-                description: None,
-                working_dir: None,
-                env: HashMap::new(),
-            }],
+            commands: vec![
+                CommandConfig {
+                    command,
+                    description: None,
+                    working_dir: None,
+                    env: HashMap::new(),
+                }
+            ],
         });
         self.save()?;
         Ok(())
@@ -313,8 +304,44 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         let mut hooks = HashMap::new();
+        let mut scripts = HashMap::new();
 
-        // Add pre-commit hooks
+        // Add default scripts
+        // 1. test-all script
+        scripts.insert(
+            "test-all".to_string(),
+            ScriptConfig {
+                parallel: true,
+                max_threads: 4,
+                commands: vec![
+                    CommandConfig {
+                        command: "sh test1.sh".to_string(),
+                        description: Some("Run test script 1".to_string()),
+                        working_dir: Some(PathBuf::from(".")),
+                        env: {
+                            let mut env = HashMap::new();
+                            env.insert("TEST_MODE".to_string(), "parallel-1".to_string());
+                            env.insert("TEST_VALUE".to_string(), "123".to_string());
+                            env
+                        },
+                    },
+                    CommandConfig {
+                        command: "sh test2.sh".to_string(),
+                        description: Some("Run test script 2".to_string()),
+                        working_dir: Some(PathBuf::from(".")),
+                        env: {
+                            let mut env = HashMap::new();
+                            env.insert("TEST_MODE".to_string(), "parallel-2".to_string());
+                            env.insert("TEST_VALUE".to_string(), "456".to_string());
+                            env
+                        },
+                    },
+                ],
+            },
+        );
+
+        // Add default hooks
+        // 1. pre-commit hook
         hooks.insert(
             "pre-commit".to_string(),
             vec![
@@ -328,57 +355,22 @@ impl Default for Config {
                     args: vec!["clippy".to_string()],
                     working_dir: None,
                 },
-                Hook {
-                    command: "cargo".to_string(),
-                    args: vec![
-                        "fmt".to_string(),
-                        "--all".to_string(),
-                        "--check".to_string(),
-                    ],
-                    working_dir: None,
-                },
             ],
         );
 
-        // Add commit-msg hook
+        // 2. commit-msg hook
         hooks.insert(
             "commit-msg".to_string(),
             vec![Hook {
-                command: std::env::current_exe()
-                    .unwrap_or_else(|_| PathBuf::from("thira"))
-                    .display()
-                    .to_string(),
+                command: "${athira}".to_string(), // Use the template variable
                 args: vec![
-                    "commit".to_string(),   // First level subcommand
-                    "validate".to_string(), // Second level subcommand
-                    "$1".to_string(),       // Message file argument
+                    "commit".to_string(),
+                    "validate".to_string(),
+                    "$1".to_string(),
                 ],
                 working_dir: None,
             }],
         );
-
-        // Add default scripts
-        let mut scripts = HashMap::new();
-        scripts.insert("lint".to_string(), ScriptConfig {
-            parallel: false,
-            max_threads: default_max_threads(),
-            commands: vec![CommandConfig {
-                command: "cargo clippy".to_string(),
-                description: None,
-                working_dir: None,
-                env: HashMap::new(),
-            }],
-        });
-        scripts.insert("test".to_string(), ScriptConfig {
-            parallel: false,
-            max_threads: default_max_threads(),
-            commands: vec![CommandConfig {
-                command: "cargo test".to_string(),
-                description: None,
-                working_dir: None,
-                env: HashMap::new(),
-            }],
-        });
 
         // Default linter config
         let lint = LinterConfig {

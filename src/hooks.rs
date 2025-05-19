@@ -1,4 +1,4 @@
-use crate::config::{Config, ScriptConfig};
+use crate::config::{Config, ScriptConfig, CommandConfig};
 use crate::error::HookError;
 use crate::error::Result;
 use crate::git::GitRepo;
@@ -612,21 +612,112 @@ impl HookManager {
     }
 
     fn substitute_variables(&self, input: &str) -> String {
+        use regex::Regex;
         let mut result = input.to_string();
 
-        // Replace ${script_name} with actual script command
-        for (name, script_config) in &self.config.scripts {
-            let var = format!("${{{}}}", name);
-            if result.contains(&var) {
-                // Use the first command's command string
-                if let Some(first_cmd) = script_config.commands.first() {
-                    result = result.replace(&var, &first_cmd.command);
+        // Get the current binary path
+        let binary_path = std::env::current_exe()
+            .unwrap_or_else(|_| PathBuf::from("athira"))
+            .display()
+            .to_string();
+
+        // Create regex for variable substitution
+        let re = Regex::new(r"\$\{([^}]+)\}").unwrap();
+
+        // Collect all replacements first to avoid recursive substitution
+        let mut replacements = Vec::new();
+
+        for cap in re.captures_iter(&result) {
+            let var = &cap[0]; // The full match including ${...}
+            let var_name = &cap[1]; // Just the name inside
+
+            let replacement = match var_name {
+                // Special case for the binary path
+                "athira" => binary_path.clone(),
+
+                // Handle script references
+                s if s.starts_with("scripts.") => {
+                    let script_name = &s["scripts.".len()..];
+                    format!("{} scripts run {}", binary_path, script_name)
                 }
-            }
+                s if self.config.scripts.contains_key(s) => {
+                    format!("{} scripts run {}", binary_path, s)
+                }
+
+                // Handle command references (name.N)
+                s if s.contains('.') => {
+                    let parts: Vec<&str> = s.split('.').collect();
+                    match parts[..] {
+                        [script_name, index_str] => {
+                            if let Some(script) = self.config.scripts.get(script_name) {
+                                if let Ok(idx) = index_str.parse::<usize>() {
+                                    if let Some(cmd) = script.commands.get(idx - 1) {
+                                        self.build_command_string(cmd)
+                                    } else {
+                                        var.to_string()
+                                    }
+                                } else {
+                                    var.to_string()
+                                }
+                            } else {
+                                var.to_string()
+                            }
+                        }
+                        [prefix @ "scripts", script_name, index_str] => {
+                            if let Some(script) = self.config.scripts.get(script_name) {
+                                if let Ok(idx) = index_str.parse::<usize>() {
+                                    if script.commands.get(idx - 1).is_some() {
+                                        format!("{} {} run {}", binary_path, prefix, script_name)
+                                    } else {
+                                        var.to_string()
+                                    }
+                                } else {
+                                    var.to_string()
+                                }
+                            } else {
+                                var.to_string()
+                            }
+                        }
+                        _ => var.to_string(),
+                    }
+                }
+
+                // Keep unknown variables as-is
+                _ => var.to_string(),
+            };
+
+            replacements.push((var.to_string(), replacement));
+        }
+
+        // Apply all replacements
+        for (var, replacement) in replacements {
+            result = result.replace(&var, &replacement);
         }
 
         result
     }
+
+    // Helper method to build a command string
+    fn build_command_string(&self, cmd: &CommandConfig) -> String {
+        let mut parts = Vec::new();
+
+        // Add working directory if specified
+        if let Some(dir) = &cmd.working_dir {
+            parts.push(format!("cd {} &&", dir.display()));
+        }
+
+        // Add environment variables if any
+        for (key, value) in &cmd.env {
+            parts.push(format!("{}=\"{}\"", key, value));
+        }
+
+        // Add the main command
+        parts.push(cmd.command.clone());
+
+        parts.join(" ")
+    }
+
+
 
 
     pub fn get_hooks_path(&self) -> Result<String> {
