@@ -275,17 +275,55 @@ fn run() -> Result<()> {
                     format!("✓ Script '{}' removed successfully.", name).green()
                 );
             }
+            // In the Scripts List command handler
             ScriptsCommands::List => {
                 println!("{}", "Configured Scripts:".blue().bold());
                 let scripts = hook_manager.get_scripts();
                 if scripts.is_empty() {
                     println!("  No scripts configured");
                 } else {
-                    for (name, command) in scripts {
-                        println!("  {}: {}", name.yellow(), command);
+                    for (name, script_config) in scripts {
+                        // For each command in the script
+                        println!("  {}:", name.yellow());
+                        for (i, cmd) in script_config.commands.iter().enumerate() {
+                            let desc = cmd.description.as_deref().unwrap_or("");
+                            let env_info = if !cmd.env.is_empty() {
+                                format!(" [{}]", cmd.env.len())
+                            } else {
+                                String::new()
+                            };
+                            let dir_info = cmd.working_dir.as_ref()
+                                .map(|d| format!(" (in {})", d.display()))
+                                .unwrap_or_default();
+
+                            if script_config.commands.len() > 1 {
+                                println!("    {}: {}{}{} {}",
+                                    (i + 1).to_string().cyan(),
+                                    cmd.command,
+                                    dir_info,
+                                    env_info,
+                                    desc
+                                );
+                            } else {
+                                // Single command script - simpler output
+                                println!("    {}{}{} {}",
+                                    cmd.command,
+                                    dir_info,
+                                    env_info,
+                                    desc
+                                );
+                            }
+                        }
+                        // Show parallel info if relevant
+                        if script_config.parallel && script_config.commands.len() > 1 {
+                            println!("    → Parallel execution ({} max threads)",
+                                script_config.max_threads
+                            );
+                        }
                     }
                 }
             }
+
             ScriptsCommands::Run { name } => {
                 hook_manager.run_script(&name)?;
                 println!(

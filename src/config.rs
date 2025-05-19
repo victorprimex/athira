@@ -3,6 +3,28 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ScriptConfig {
+    #[serde(default)]
+    pub parallel: bool,
+    #[serde(default = "default_max_threads")]
+    pub max_threads: usize,
+    #[serde(default)]
+    pub commands: Vec<CommandConfig>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CommandConfig {
+    pub command: String,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub working_dir: Option<PathBuf>,
+    #[serde(default)]
+    pub env: HashMap<String, String>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct LinterConfig {
     #[serde(default)]
@@ -20,7 +42,7 @@ pub struct LinterConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub hooks: HashMap<String, Vec<Hook>>,
-    pub scripts: HashMap<String, String>,
+    pub scripts: HashMap<String, ScriptConfig>,
     #[serde(default)]
     pub options: Options,
     #[serde(default)]
@@ -61,6 +83,31 @@ fn default_hooks_dir() -> String {
     ".thira".to_string()
 }
 
+fn default_max_threads() -> usize {
+    4
+}
+
+use std::fmt;
+
+// Add Display implementation for ScriptConfig
+impl fmt::Display for ScriptConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.commands.len() == 1 {
+            // For backward compatibility with simple scripts, just show the command
+            write!(f, "{}", self.commands[0].command)
+        } else {
+            write!(
+                f,
+                "{} commands, parallel: {}",
+                self.commands.len(),
+                if self.parallel { "yes" } else { "no" }
+            )
+        }
+    }
+}
+
+
+
 impl Config {
     pub fn load() -> crate::error::Result<Self> {
         let config_path = PathBuf::from("hooks.yaml");
@@ -96,10 +143,49 @@ impl Config {
             }
         }
 
-        // Scripts section
+        // Scripts section with new format
         content.push_str("\nscripts:\n");
-        for (name, command) in &self.scripts {
-            content.push_str(&format!("  {}: {}\n", name, command));
+        for (name, script) in &self.scripts {
+            content.push_str(&format!("  {}:\n", name));
+
+            // Only include parallel and max_threads if there are multiple commands
+            // or if parallel is explicitly enabled
+            if script.commands.len() > 1 || script.parallel {
+                content.push_str(&format!("    parallel: {}\n", script.parallel));
+                content.push_str(&format!("    max_threads: {}\n", script.max_threads));
+            }
+
+            if script.commands.len() == 1 && !script.parallel {
+                // Simple format for single commands without extra configuration
+                let cmd = &script.commands[0];
+                if cmd.description.is_none() && cmd.working_dir.is_none() && cmd.env.is_empty() {
+                    content.push_str(&format!("    {}\n", cmd.command));
+                    continue;
+                }
+            }
+
+            // Full format with commands array
+            content.push_str("    commands:\n");
+            for cmd in &script.commands {
+                content.push_str("      - command: ");
+                content.push_str(&cmd.command);
+                content.push('\n');
+
+                if let Some(desc) = &cmd.description {
+                    content.push_str(&format!("        description: {}\n", desc));
+                }
+
+                if let Some(dir) = &cmd.working_dir {
+                    content.push_str(&format!("        working_dir: {}\n", dir.display()));
+                }
+
+                if !cmd.env.is_empty() {
+                    content.push_str("        env:\n");
+                    for (key, value) in &cmd.env {
+                        content.push_str(&format!("          {}: {}\n", key, value));
+                    }
+                }
+            }
         }
 
         // Options section
@@ -203,7 +289,16 @@ impl Config {
     }
 
     pub fn add_script(&mut self, name: String, command: String) -> crate::error::Result<()> {
-        self.scripts.insert(name, command);
+        self.scripts.insert(name, ScriptConfig {
+            parallel: false,
+            max_threads: default_max_threads(),
+            commands: vec![CommandConfig {
+                command,
+                description: None,
+                working_dir: None,
+                env: HashMap::new(),
+            }],
+        });
         self.save()?;
         Ok(())
     }
@@ -264,8 +359,26 @@ impl Default for Config {
 
         // Add default scripts
         let mut scripts = HashMap::new();
-        scripts.insert("lint".to_string(), "cargo clippy".to_string());
-        scripts.insert("test".to_string(), "cargo test".to_string());
+        scripts.insert("lint".to_string(), ScriptConfig {
+            parallel: false,
+            max_threads: default_max_threads(),
+            commands: vec![CommandConfig {
+                command: "cargo clippy".to_string(),
+                description: None,
+                working_dir: None,
+                env: HashMap::new(),
+            }],
+        });
+        scripts.insert("test".to_string(), ScriptConfig {
+            parallel: false,
+            max_threads: default_max_threads(),
+            commands: vec![CommandConfig {
+                command: "cargo test".to_string(),
+                description: None,
+                working_dir: None,
+                env: HashMap::new(),
+            }],
+        });
 
         // Default linter config
         let lint = LinterConfig {

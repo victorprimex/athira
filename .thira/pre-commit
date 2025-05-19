@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cargo test
+sh test1.sh test
 if [ $? -ne 0 ]; then
   exit 1
 fi
