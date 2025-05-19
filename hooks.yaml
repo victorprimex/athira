@@ -1,11 +1,6 @@
 hooks:
   pre-commit:
-    - command: cargo
-      args:
-        - test
-    - command: cargo
-      args:
-        - clippy
+    - command: ${scripts.test-all}
   commit-msg:
     - command: ${athira}
       args:
@@ -16,7 +11,7 @@ hooks:
 scripts:
   test-all:
     parallel: true
-    max_threads: 4
+    max_threads: 2
     commands:
       - command: "sh test1.sh"
         description: "Run test script 1"
