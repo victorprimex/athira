@@ -1,4 +1,4 @@
-use crate::config::{Config, ScriptConfig, CommandConfig};
+// use crate::config::{Config, ScriptConfig, CommandConfig};
 use crate::error::HookError;
 use crate::error::Result;
 use crate::git::GitRepo;
@@ -50,8 +50,6 @@ impl HookManager {
     //     Ok(())
     // }
     //
-
-
 
     // pub fn run_script(&self, name: &str) -> Result<()> {
     //     use crossterm::{
@@ -249,17 +247,16 @@ impl HookManager {
 
     pub fn run_script(&self, name: &str) -> Result<()> {
         use crossterm::{
-            cursor,
-            execute,
-            terminal::{self, Clear, ClearType},
+            cursor, execute,
             style::{Color, Print, SetForegroundColor},
+            terminal::{self, Clear, ClearType},
         };
         use parking_lot::Mutex;
         use std::io::stdout;
-        use std::sync::Arc;
-        use std::thread::{self, JoinHandle};  // Add JoinHandle import
-        use std::time::Instant;
         use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+        use std::thread::{self, JoinHandle}; // Add JoinHandle import
+        use std::time::Instant;
 
         // Create a mutex-wrapped stdout for thread-safe access
         let stdout = Arc::new(Mutex::new(stdout()));
@@ -275,20 +272,21 @@ impl HookManager {
         let start_time = Instant::now();
 
         // Get the script configuration
-        let script_config = self.config
-            .scripts
-            .get(name)
-            .ok_or_else(|| HookError::ScriptExecutionError {
-                script_name: name.to_string(),
-                reason: "Script not found".to_string(),
-            })?;
+        let script_config =
+            self.config
+                .scripts
+                .get(name)
+                .ok_or_else(|| HookError::ScriptExecutionError {
+                    script_name: name.to_string(),
+                    reason: "Script not found".to_string(),
+                })?;
 
         if script_config.commands.is_empty() {
             return Ok(());
         }
 
         let commands = Arc::new(script_config.commands.clone());
-        let mut handles: Vec<JoinHandle<Result<()>>> = vec![];  // Add type annotation here
+        let mut handles: Vec<JoinHandle<Result<()>>> = vec![]; // Add type annotation here
 
         // Calculate screen layout
         let (term_width, term_height) = terminal::size()?;
@@ -311,7 +309,10 @@ impl HookManager {
                         " Command {}: {} {}",
                         idx + 1,
                         cmd.command,
-                        cmd.description.as_ref().map(|d| format!("({})", d)).unwrap_or_default()
+                        cmd.description
+                            .as_ref()
+                            .map(|d| format!("({})", d))
+                            .unwrap_or_default()
                     )),
                 )?;
             }
@@ -334,10 +335,12 @@ impl HookManager {
             if !script_config.parallel {
                 // Take ownership and join the last handle if it exists
                 if let Some(last_handle) = handles.pop() {
-                    match last_handle.join().map_err(|_| HookError::ScriptExecutionError {
-                        script_name: name.clone(),
-                        reason: "Thread panicked".to_string(),
-                    })? {
+                    match last_handle
+                        .join()
+                        .map_err(|_| HookError::ScriptExecutionError {
+                            script_name: name.clone(),
+                            reason: "Thread panicked".to_string(),
+                        })? {
                         Ok(_) => (),
                         Err(e) => {
                             // If sequential execution fails, return immediately
@@ -357,7 +360,9 @@ impl HookManager {
                 }
             } else {
                 // Wait if we've reached max threads
-                while script_config.parallel && active_threads.load(Ordering::SeqCst) >= script_config.max_threads {
+                while script_config.parallel
+                    && active_threads.load(Ordering::SeqCst) >= script_config.max_threads
+                {
                     thread::sleep(std::time::Duration::from_millis(100));
                 }
             }
@@ -435,7 +440,6 @@ impl HookManager {
                 Ok(())
             });
 
-
             handles.push(handle);
         }
 
@@ -470,10 +474,18 @@ impl HookManager {
             execute!(
                 stdout,
                 cursor::MoveTo(0, term_height - 1),
-                SetForegroundColor(if all_successful { Color::Green } else { Color::Red }),
+                SetForegroundColor(if all_successful {
+                    Color::Green
+                } else {
+                    Color::Red
+                }),
                 Print(format!(
                     "Execution {} in {:.2?} ({})",
-                    if all_successful { "completed" } else { "failed" },
+                    if all_successful {
+                        "completed"
+                    } else {
+                        "failed"
+                    },
                     total_duration,
                     if script_config.parallel {
                         format!("parallel, max {} threads", script_config.max_threads)
@@ -486,8 +498,6 @@ impl HookManager {
             // Wait for user input before closing
             execute!(stdout, cursor::MoveTo(0, term_height))?;
         }
-
-
 
         terminal::disable_raw_mode()?;
         {
@@ -504,7 +514,6 @@ impl HookManager {
 
         Ok(())
     }
-
 
     pub fn validate_commit_message(&self, message_file: &str) -> Result<()> {
         let message = std::fs::read_to_string(message_file).map_err(|e| HookError::FileError {
@@ -552,7 +561,6 @@ impl HookManager {
                 self.repo.uninstall_hook(&hook_name)?;
             }
         }
-
 
         // Clean up old hooks in .git/hooks before installing new ones
         self.repo
@@ -717,9 +725,6 @@ impl HookManager {
         parts.join(" ")
     }
 
-
-
-
     pub fn get_hooks_path(&self) -> Result<String> {
         // First check Git config
         let output = std::process::Command::new("git")
@@ -799,12 +804,9 @@ impl HookManager {
             .or_default()
             .push(hook);
 
-
         // Just save - config.save() will handle auto_install
         self.config.save()?;
 
         Ok(())
     }
-
-
 }
