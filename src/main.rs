@@ -3,6 +3,7 @@ mod error;
 mod git;
 mod hooks;
 mod lint;
+mod scripts;
 
 use clap::{Command, CommandFactory, Parser, Subcommand};
 use colored::*;
@@ -172,18 +173,17 @@ fn main() {
 
 fn run() -> Result<()> {
     let cli = Cli::parse();
-    let mut hook_manager = hooks::HookManager::new().inspect_err(|e| {
-        match e {
-            HookError::GitNotFound => {
-                println!(
-                    "{}",
-                    "Not a git repository. Please run 'git init' first.".red()
-                );
-            }
-            _ => print_error(e),
+    let mut hook_manager = hooks::HookManager::new().inspect_err(|e| match e {
+        HookError::GitNotFound => {
+            println!(
+                "{}",
+                "Not a git repository. Please run 'git init' first.".red()
+            );
         }
+        _ => print_error(e),
     })?;
 
+    let mut script_manager = scripts::ScriptManager::new()?;
 
     match cli.command {
         Commands::Hooks(cmd) => match cmd {
@@ -262,14 +262,14 @@ fn run() -> Result<()> {
 
         Commands::Scripts(cmd) => match cmd {
             ScriptsCommands::Add { name, command } => {
-                hook_manager.add_script(name.clone(), command)?;
+                script_manager.add_script(name.clone(), command)?;
                 println!(
                     "{}",
                     format!("✓ Script '{}' added successfully.", name).green()
                 );
             }
             ScriptsCommands::Remove { name } => {
-                hook_manager.remove_script(&name)?;
+                script_manager.remove_script(&name)?;
                 println!(
                     "{}",
                     format!("✓ Script '{}' removed successfully.", name).green()
@@ -278,7 +278,7 @@ fn run() -> Result<()> {
             // In the Scripts List command handler
             ScriptsCommands::List => {
                 println!("{}", "Configured Scripts:".blue().bold());
-                let scripts = hook_manager.get_scripts();
+                let scripts = script_manager.get_scripts();
                 if scripts.is_empty() {
                     println!("  No scripts configured");
                 } else {
@@ -292,12 +292,15 @@ fn run() -> Result<()> {
                             } else {
                                 String::new()
                             };
-                            let dir_info = cmd.working_dir.as_ref()
+                            let dir_info = cmd
+                                .working_dir
+                                .as_ref()
                                 .map(|d| format!(" (in {})", d.display()))
                                 .unwrap_or_default();
 
                             if script_config.commands.len() > 1 {
-                                println!("    {}: {}{}{} {}",
+                                println!(
+                                    "    {}: {}{}{} {}",
                                     (i + 1).to_string().cyan(),
                                     cmd.command,
                                     dir_info,
@@ -306,17 +309,13 @@ fn run() -> Result<()> {
                                 );
                             } else {
                                 // Single command script - simpler output
-                                println!("    {}{}{} {}",
-                                    cmd.command,
-                                    dir_info,
-                                    env_info,
-                                    desc
-                                );
+                                println!("    {}{}{} {}", cmd.command, dir_info, env_info, desc);
                             }
                         }
                         // Show parallel info if relevant
                         if script_config.parallel && script_config.commands.len() > 1 {
-                            println!("    → Parallel execution ({} max threads)",
+                            println!(
+                                "    → Parallel execution ({} max threads)",
                                 script_config.max_threads
                             );
                         }
@@ -325,7 +324,7 @@ fn run() -> Result<()> {
             }
 
             ScriptsCommands::Run { name } => {
-                hook_manager.run_script(&name)?;
+                script_manager.run_script(&name)?;
                 println!(
                     "{}",
                     format!("✓ Script '{}' completed successfully.", name).green()
