@@ -1,4 +1,4 @@
-// use crate::config::{Config, ScriptConfig, CommandConfig};
+use crate::config::{CommandConfig, Config, ScriptConfig};
 use crate::error::HookError;
 use crate::error::Result;
 use crate::git::GitRepo;
