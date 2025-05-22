@@ -29,7 +29,7 @@ impl ScriptManager {
         use std::io::stdout;
         use std::sync::atomic::{AtomicUsize, Ordering};
         use std::sync::Arc;
-        use std::thread::{self, JoinHandle}; // Add JoinHandle import
+        use std::thread::{self, JoinHandle};
         use std::time::Instant;
 
         // Create a mutex-wrapped stdout for thread-safe access
@@ -102,7 +102,7 @@ impl ScriptManager {
             let name = name.to_string();
             let stdout = Arc::clone(&stdout);
             let y_pos = idx as u16 * section_height;
-            let term_width = term_width;
+            // let term_width = term_width;
             let active_threads = Arc::clone(&active_threads);
 
             // If parallel execution is disabled, wait for previous command to complete
@@ -173,19 +173,18 @@ impl ScriptManager {
                 let mut current_line = y_pos + 1;
 
                 // Process output in real-time
+
                 if let Some(child_stdout) = child.stdout.take() {
                     let reader = std::io::BufReader::new(child_stdout);
-                    for line in std::io::BufRead::lines(reader) {
-                        if let Ok(line) = line {
-                            let mut stdout = stdout.lock();
-                            execute!(
-                                stdout,
-                                cursor::MoveTo(1, current_line),
-                                Clear(ClearType::CurrentLine),
-                                Print(&line)
-                            )?;
-                            current_line = (current_line + 1).min(y_pos + section_height - 1);
-                        }
+                    for line in std::io::BufRead::lines(reader).flatten() {
+                        let mut stdout = stdout.lock();
+                        execute!(
+                            stdout,
+                            cursor::MoveTo(1, current_line),
+                            Clear(ClearType::CurrentLine),
+                            Print(&line)
+                        )?;
+                        current_line = (current_line + 1).min(y_pos + section_height - 1);
                     }
                 }
 

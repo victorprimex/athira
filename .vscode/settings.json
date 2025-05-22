@@ -1,0 +1,4 @@
+{
+  "rust-analyzer.linkedProjects": ["Cargo.toml"],
+  "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+}
