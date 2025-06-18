@@ -22,6 +22,7 @@ Our documentation is split into several sections for easier navigation:
 
 - [Installation Guide](docs/installation.md) - How to install and set up Athira
 - [Basic Usage](docs/basic-usage.md) - Getting started with Athira
+- [Configuration Guide](docs/configuration.md) - Complete reference for hooks.yaml configuration
 - [Hook Management](docs/hook-management.md) - Managing Git hooks
 - [Script Management](docs/script-management.md) - Creating and managing custom scripts
 - [Commit Message Guidelines](docs/commit-guidelines.md) - How to write valid commit messages
