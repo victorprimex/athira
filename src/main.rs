@@ -2,7 +2,7 @@ mod config;
 mod error;
 mod git;
 mod hooks;
-mod lint;
+mod linter;
 mod scripts;
 
 use clap::{Command, CommandFactory, Parser, Subcommand};

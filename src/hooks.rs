@@ -2,7 +2,7 @@ use crate::config::{CommandConfig, Config};
 use crate::error::HookError;
 use crate::error::Result;
 use crate::git::GitRepo;
-use crate::lint::CommitLinter;
+use crate::linter::CommitLinter;
 use std::collections::HashMap;
 use std::path::PathBuf;
 

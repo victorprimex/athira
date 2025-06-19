@@ -77,23 +77,33 @@ Available template variables:
 
 ## Scripts Section
 
-The `scripts` section defines reusable automation scripts that can be run independently or referenced in hooks.
+The `scripts` section defines reusable automation scripts that can be run independently or referenced in hooks. All scripts must be defined using the command array format.
 
-### Simple Script Configuration
-
-```yaml
-scripts:
-  lint: "cargo clippy --all-features"
-  test: "cargo test --all"
-  build: "cargo build --release"
-```
-
-### Advanced Script Configuration (Experimental)
-
-For complex scripts with parallel execution and per-command settings:
+### Script Configuration Format
 
 ```yaml
 scripts:
+  lint-all:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo clippy --workspace"
+        description: "Run clippy on all workspace crates"
+
+  test-integration:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo test --test integration"
+        description: "Run integration tests"
+
+  build-release:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo build --release"
+        description: "Build release binary"
+
   test-all:
     parallel: true
     max_threads: 4
@@ -137,12 +147,23 @@ Reference scripts in hooks using template variables:
 ```yaml
 hooks:
   pre-commit:
-    - command: ${lint} # References the 'lint' script
-    - command: ${test} # References the 'test' script
+    - command: ${lint-all} # References the 'lint-all' script
+    - command: ${test-integration} # References the 'test-integration' script
 
 scripts:
-  lint: "cargo clippy --workspace"
-  test: "cargo test --all"
+  lint-all:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo clippy --workspace"
+        description: "Run clippy on workspace"
+
+  test-integration:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo test --test integration"
+        description: "Run integration tests"
 ```
 
 ## Options Section
@@ -278,8 +299,8 @@ hooks:
       args:
         - fmt
         - --check
-    - command: ${lint}
-    - command: ${test}
+    - command: ${lint-all}
+    - command: ${test-all}
 
   commit-msg:
     - command: ${athira}
@@ -289,13 +310,32 @@ hooks:
         - $1
 
   pre-push:
-    - command: ${build}
+    - command: ${build-release}
 
 scripts:
-  # Simple scripts
-  lint: "cargo clippy --workspace -- -D warnings"
-  test: "cargo test --all"
-  build: "cargo build --release"
+  # Simple single-command scripts
+  lint-all:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo clippy --workspace -- -D warnings"
+        description: "Run linting checks"
+        env:
+          RUSTFLAGS: "-D warnings"
+
+  test-all:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo test --all"
+        description: "Run all tests"
+
+  build-release:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo build --release"
+        description: "Build release binary"
 
   # Advanced parallel script
   ci-check:

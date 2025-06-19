@@ -53,26 +53,33 @@ thira scripts remove <name>
 
 ## Script Configuration
 
-Scripts are stored in the `hooks.yaml` file under the `scripts` section. Athira supports two configuration formats:
+Scripts are stored in the `hooks.yaml` file under the `scripts` section. All scripts must be defined using the command array format:
 
-### Simple Scripts
-
-For single commands:
+### Script Configuration Format
 
 ```yaml
 scripts:
-  lint: cargo clippy --all-features
-  test: cargo test --all
-  check: cargo fmt --check
-  build: cargo build --release
-```
+  lint-all:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo clippy --workspace"
+        description: "Run clippy on all workspace crates"
 
-### Advanced Scripts (Experimental)
+  test-integration:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo test --test integration"
+        description: "Run integration tests"
 
-For complex scripts with multiple commands and parallel execution:
+  build-release:
+    parallel: false
+    max_threads: 1
+    commands:
+      - command: "cargo build --release"
+        description: "Build release binary"
 
-```yaml
-scripts:
   test-all:
     parallel: true
     max_threads: 4
@@ -90,6 +97,23 @@ scripts:
       - command: "cargo clippy --all-targets"
         description: "Run clippy on all targets"
 ```
+
+### Required Script Properties
+
+Each script must include:
+
+- `parallel`: Enable parallel execution (true/false)
+- `max_threads`: Maximum number of concurrent threads
+- `commands`: Array of command configurations
+
+### Command Configuration
+
+Each command in the commands array can have:
+
+- `command`: The command to execute (required)
+- `description`: Human-readable description (optional)
+- `working_dir`: Working directory for the command (optional)
+- `env`: Environment variables specific to this command (optional)
 
 ## Parallel Execution (Experimental)
 
