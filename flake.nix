@@ -98,8 +98,11 @@
                 rust-bin.stable.latest.default
                 pkg-config
                 openssl
+                rustup
               ]
               ++ platformDeps;
+            RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+
 
           };
         }

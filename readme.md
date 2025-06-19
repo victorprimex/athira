@@ -8,13 +8,13 @@ Athira is a powerful Git hooks manager and commit message linter that helps you 
 
 ## Features
 
-- 🔧 Easy Git hooks management
-- 📝 Conventional commit message validation
-- 🚀 Custom script automation
-- ⚡ Simple and intuitive CLI
-- 🔄 Supports multiple hooks per event
-- 🎨 Colorful and informative output
-- 🛠️ Configurable commit message rules
+- **Easy Git hooks management**
+- **Conventional commit message validation**
+- **Custom script automation**
+- **Simple and intuitive CLI**
+- **Supports multiple hooks per event**
+- **Colorful and informative output**
+- **Configurable commit message rules**
 
 ## Documentation
 
@@ -22,6 +22,7 @@ Our documentation is split into several sections for easier navigation:
 
 - [Installation Guide](docs/installation.md) - How to install and set up Athira
 - [Basic Usage](docs/basic-usage.md) - Getting started with Athira
+- [Configuration Guide](docs/configuration.md) - Complete reference for hooks.yaml configuration
 - [Hook Management](docs/hook-management.md) - Managing Git hooks
 - [Script Management](docs/script-management.md) - Creating and managing custom scripts
 - [Commit Message Guidelines](docs/commit-guidelines.md) - How to write valid commit messages
@@ -29,6 +30,9 @@ Our documentation is split into several sections for easier navigation:
 ## Quick Start
 
 ```sh
+# Install with installer
+curl -sSL https://raw.githubusercontent.com/victorprimex/athira/main/install.sh | bash
+
 # Install with Cargo
 cargo install athira
 
