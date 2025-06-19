@@ -1,15 +1,11 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main"
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "perl -i -pe \"s/(\\\\\\\"athira-[^\\\\\\\"]+\\\\\\\": *)?\\\\\\\"?\\\\*\\\\\\\"?/\\1\\\\\\\"${nextRelease.version}\\\\\\\"/g\" packages/npm/athira/package.json"
-      }
-    ],
     [
       "@semantic-release/npm",
       {
@@ -47,13 +43,6 @@
         ]
       }
     ],
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "sed -i.bak -E 's/^version = \"[^\"]+\"$/version = \"${nextRelease.version}\"/' Cargo.toml"
-      }
-    ],
-
     [
       "@semantic-release/git",
       {

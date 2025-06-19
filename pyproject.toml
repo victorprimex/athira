@@ -4,14 +4,40 @@ build-backend = "maturin"
 
 [project]
 name = "athira"
-description = "Athira CLI tool"
+description = "A Git hooks manager and commit message linter for automating development workflows"
+readme = "readme.md"
 requires-python = ">=3.7"
 dynamic = ["version"]
+license = { text = "MIT OR Apache-2.0" }
+authors = [{ name = "Victor Prime", email = "victorprimex@gmail.com" }]
+keywords = [
+    "cli",
+    "automation",
+    "workflow",
+    "development",
+    "git-hooks",
+    "commit-linter",
+]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Version Control :: Git",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Utilities",
 ]
+
+[project.urls]
+Homepage = "https://github.com/victorprimex/athira"
+Repository = "https://github.com/victorprimex/athira"
+Documentation = "https://github.com/victorprimex/athira#readme"
+"Bug Reports" = "https://github.com/victorprimex/athira/issues"
 
 [tool.maturin]
 bindings = "bin"
