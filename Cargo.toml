@@ -8,14 +8,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/victorprimex/athira"
 documentation = "https://github.com/victorprimex/athira#readme"
 homepage = "https://github.com/victorprimex/athira"
-keywords = [
-    "cli",
-    "automation",
-    "workflow",
-    "development",
-    "git-hooks",
-    "commit-linter",
-]
+keywords = ["cli", "automation", "workflow", "git-hooks", "commit-linter"]
 categories = ["command-line-utilities", "development-tools"]
 readme = "readme.md"
 exclude = [
