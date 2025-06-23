@@ -1,3 +1,15 @@
+# [0.7.0](https://github.com/victorprimex/athira/compare/v0.6.0...v0.7.0) (2025-06-23)
+
+
+### Features
+
+* add hooks2 ([d840a40](https://github.com/victorprimex/athira/commit/d840a4049bc9fb358b6dd98b1008072181f867ae))
+* disable npm publish ([2cafc68](https://github.com/victorprimex/athira/commit/2cafc682b8add62154aad626b56260c936222a28))
+* disable npm publish ([21638e4](https://github.com/victorprimex/athira/commit/21638e4d2e989f6695009e23a5511ab5935d2b20))
+* disable npm publish ([98a6b89](https://github.com/victorprimex/athira/commit/98a6b891358b9eb2aecab86857e303432fe7e1f5))
+* new release test ([074639f](https://github.com/victorprimex/athira/commit/074639f27e871e08974a261401cdc4618e375a90))
+* update ([b261cc3](https://github.com/victorprimex/athira/commit/b261cc30c78329eee28f0addd6f4dc14ee575fd0))
+
 # [0.6.0](https://github.com/victorprimex/athira/compare/v0.5.0...v0.6.0) (2025-05-18)
 
 
