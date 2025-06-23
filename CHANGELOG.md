@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/victorprimex/athira/compare/v0.7.0...v0.8.0) (2025-06-23)
+
+
+### Features
+
+* disable npm publish 2 ([ec8d090](https://github.com/victorprimex/athira/commit/ec8d090a5d652c9d5bbc9cf9dccd27ac6a6ff60d))
+
 # [0.7.0](https://github.com/victorprimex/athira/compare/v0.6.0...v0.7.0) (2025-06-23)
 
 
