@@ -1,6 +1,6 @@
 [package]
 name = "athira"
-version = "0.6.0"
+version = "0.9.0"
 edition = "2021"
 description = "A Git hooks manager and commit message linter for automating development workflows"
 authors = ["Victor Prime <victorprimex@gmail.com>"]

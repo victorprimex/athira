@@ -1,6 +1,6 @@
 {
   "name": "athira",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "description": "A Git hooks manager and commit message linter for automating development workflows",
   "bin": "lib/index.js",
   "private": true,
@@ -23,11 +23,11 @@
   },
   "homepage": "https://github.com/victorprimex/athira#readme",
   "optionalDependencies": {
-    "athira-linux-x64": "0.6.0",
-    "athira-linux-arm64": "0.6.0",
-    "athira-darwin-x64": "0.6.0",
-    "athira-darwin-arm64": "0.6.0",
-    "athira-windows-x64": "0.6.0",
-    "athira-windows-arm64": "0.6.0"
+    "athira-linux-x64": "0.9.0",
+    "athira-linux-arm64": "0.9.0",
+    "athira-darwin-x64": "0.9.0",
+    "athira-darwin-arm64": "0.9.0",
+    "athira-windows-x64": "0.9.0",
+    "athira-windows-arm64": "0.9.0"
   }
 }
