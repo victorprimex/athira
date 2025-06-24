@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/Users/ss/Documents/athira/target/debug/athira commit validate "$1"
+/Users/ervan/Documents/Projects/athira/target/debug/athira commit validate "$1"
 if [ $? -ne 0 ]; then
   exit 1
 fi
