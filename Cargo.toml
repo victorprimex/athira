@@ -1,24 +1,29 @@
 [package]
 name = "athira"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
-description = "A command-line tool for automating development workflows"
-authors = ["Your Name <your.email@example.com>"]
+description = "A Git hooks manager and commit message linter for automating development workflows"
+authors = ["Victor Prime <victorprimex@gmail.com>"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/athira"
-documentation = "https://github.com/yourusername/athira#readme"
-homepage = "https://github.com/yourusername/athira"
-keywords = ["cli", "automation", "workflow", "development"]
+repository = "https://github.com/victorprimex/athira"
+documentation = "https://github.com/victorprimex/athira#readme"
+homepage = "https://github.com/victorprimex/athira"
+keywords = ["cli", "automation", "workflow", "git-hooks", "commit-linter"]
 categories = ["command-line-utilities", "development-tools"]
+readme = "readme.md"
 exclude = [
     ".github/*",
     ".gitignore",
     ".thira/*",
     "packages/*",
     "hooks.yaml",
+    "hooks2.yaml",
     "flake.nix",
     "flake.lock",
-    ".direnv/*"
+    ".direnv/*",
+    "test1.sh",
+    "test2.sh",
+    "install.sh",
 ]
 
 [dependencies]
@@ -30,3 +35,6 @@ anyhow = "1.0"
 colored = "2.0"
 dirs = "5.0"
 regex = "1.9"
+crossterm = "0.27"
+parking_lot = "0.12"
+num_cpus = "1.13"

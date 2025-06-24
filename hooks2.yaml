@@ -1,21 +1,5 @@
-hooks:
-  commit-msg:
-    - command: ${athira}
-      args:
-        - commit
-        - validate
-        - $1
-  pre-commit:
-    - command: cargo
-      args:
-        - test
-    - command: cargo
-      args:
-        - clippy
-
 scripts:
-
-  test-all:
+  test-all: &test-all
     parallel: true
     max_threads: 4
     commands:
@@ -29,8 +13,18 @@ scripts:
         description: "Run test script 2"
         working_dir: "."
         env:
-          TEST_VALUE: "456"
           TEST_MODE: "parallel-2"
+          TEST_VALUE: "456"
+
+hooks:
+  pre-commit:
+    - command: *test-all
+  commit-msg:
+    - command: ${athira}
+      args:
+        - commit
+        - validate
+        - $1
 
 options:
   auto_install: true

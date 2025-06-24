@@ -8,27 +8,31 @@ Thira is a Git hooks manager and commit message linter that helps you maintain c
 
 ## Features
 
-- 🔧 Easy Git hooks management
-- 📝 Conventional commit message validation
-- 🚀 Custom script automation
-- ⚡ Simple and intuitive CLI
-- 🔄 Supports multiple hooks per event
-- 🎨 Colorful and informative output
-- 🛠️ Configurable commit message rules
+- **Easy Git hooks management**
+- **Conventional commit message validation**
+- **Custom script automation**
+- **Simple and intuitive CLI**
+- **Supports multiple hooks per event**
+- **Colorful and informative output**
+- **Configurable commit message rules**
 
 ## Documentation
 
 Our documentation is split into several sections for easier navigation:
 
-- [Installation Guide](https://github.com/yourusername/thira/blob/main/docs/installation.md) - How to install and set up Thira
-- [Basic Usage](https://github.com/yourusername/thira/blob/main/docs/basic-usage.md) - Getting started with Thira
-- [Hook Management](https://github.com/yourusername/thira/blob/main/docs/hook-management.md) - Managing Git hooks
-- [Script Management](https://github.com/yourusername/thira/blob/main/docs/script-management.md) - Creating and managing custom scripts
-- [Commit Message Guidelines](https://github.com/yourusername/thira/blob/main/docs/commit-guidelines.md) - How to write valid commit messages
+- [Installation Guide](docs/installation.md) - How to install and set up Athira
+- [Basic Usage](docs/basic-usage.md) - Getting started with Athira
+- [Configuration Guide](docs/configuration.md) - Complete reference for hooks.yaml configuration
+- [Hook Management](docs/hook-management.md) - Managing Git hooks
+- [Script Management](docs/script-management.md) - Creating and managing custom scripts
+- [Commit Message Guidelines](docs/commit-guidelines.md) - How to write valid commit messages
 
 ## Quick Start
 
 ```sh
+# Install with installer
+curl -sSL https://raw.githubusercontent.com/victorprimex/athira/main/install.sh | bash
+
 # Install with Cargo
 cargo install thira
 
